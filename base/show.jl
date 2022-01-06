@@ -2540,9 +2540,7 @@ function show(io::IO, typ::CC.LatticeElement)
         show(io, CC.ignoremaybeundef(typ))
         print(io, ')')
     else
-        if CC.isConditional(typ)
-            show(io, CC.conditional(typ))
-        elseif CC.isConst(typ)
+        if CC.isConst(typ)
             print(io, nameof(CC.Const), '(', CC.constant(typ), ')')
         elseif CC.isPartialStruct(typ)
             print(io, nameof(CC.PartialStruct), '(', CC.widenconst(typ), ", [")
@@ -2552,6 +2550,8 @@ function show(io::IO, typ::CC.LatticeElement)
                 i == n || print(io, ", ")
             end
             print(io, "])")
+        elseif CC.isConditional(typ)
+            show(io, CC.conditional(typ))
         elseif CC.isPartialTypeVar(typ)
             print(io, nameof(CC.PartialTypeVar), '(')
             show(io, CC.partialtypevar(typ).tv)
@@ -2569,9 +2569,6 @@ function show(io::IO, typ::CC.LatticeElement)
 end
 
 function show(io::IO, typ::CC.ConditionalInfo)
-    if typ === CC.__NULL_CONDITIONAL__
-        return print(io, "$CC.__NULL_CONDITIONAL__")
-    end
     print(io, nameof(CC.Conditional), '(')
     show(io, Core.SlotNumber(typ.slot_id))
     print(io, ", ")
